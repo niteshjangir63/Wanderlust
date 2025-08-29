@@ -1,0 +1,237 @@
+<% layout("/layouts/boilerplate") -%>
+
+    <body>
+        <div class="card  listings-card offset-1 show-card mt-3 h-25 d-inline-block" style="width: 80%;">
+            <h4 class="card-title">
+                <%= listing.title %>
+            </h4>
+            
+            <img src="<%= listing.image.url %>" class="card-img-top row-cols-auto g-3" alt="<%= listing.title %>">
+
+            <div class="card-body">
+                <input type="hidden" id="locationValue" value="<%=listing.location%>">
+                <p class="card-text">Owned by • <b><i><%= listing.owner.username %></i></b>
+                </p>
+                <p class="card-text">
+                    <%= listing.description %><br>
+                        &#8377;<%= listing.price.toLocaleString("en-IN") %> / night<br>
+                            <%= listing.location %><br>
+                                <%= listing.country %>
+
+                                <% if (listing.reviews && listing.reviews.length > 0) { %>
+                                <% 
+                                    let commentCount = listing.reviews.length;
+
+                                    let maxComment = 5;
+
+                                    let ratingVal = commentCount >= maxComment 
+                                        ? 5.0 
+                                        : (commentCount / maxComment) * 5;
+
+                                    ratingVal = Math.round(ratingVal * 10) / 10;
+                                %>
+                                       
+
+                                        <i class="fa-solid fa-star"></i> <b><%= ratingVal.toFixed(1) %> / 5.0</b>
+
+                                        <%}%>
+
+                </p>
+            </div>
+
+
+
+
+            <% if(user && user._id.equals(listing.owner._id)) { %>
+
+                <div class="card-body card-btns">
+                    <a href="/listings/edit/<%= listing._id %>" class="card-link edit btn btn-primary">Edit</a>
+
+                    <form method="post" class="card-link delete" action="/listings/<%= listing._id %>?_method=DELETE">
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+
+                <%}%>
+
+
+
+
+
+ <% if(user) { %>
+
+
+                    <div class="mb-3 mt-3">
+                        <form action="/listings/<%= listing._id %>/review" method="POST" novalidate
+                            class="needs-validation">
+
+
+                            <label for="customRange2" class="form-label">
+                                <h5>Leave a Review</h5>
+                            </label>
+                            <input type="range" class="form-range" name="review[rating]" min="1" max="5"
+                                id="customRange2">
+
+
+                            <label for="exampleFormControlTextarea1" class="form-label">Comment</label>
+                            <textarea
+                                class="form-control p-3 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3"
+                                id="exampleFormControlTextarea1" rows="5" name="review[comment]" placeholder="Comment"
+                                required></textarea>
+                            <div class="invalid-feedback">Cannot Leave Empty Review. Leave Valid Review!</div>
+
+                            <button type="submit" class="btn btn-outline-primary mt-3">Leave</button>
+                        </form>
+
+                    </div>
+
+                     <%}%>
+
+        </div>
+
+
+        
+
+
+        <div>
+
+            <% if (listing.reviews && listing.reviews.length> 0) { %>
+                <h4 class="mb-3 mt-3 offset-1">All Reviews (<%= listing.reviews.length %>)</h4>
+                <% } else { %>
+                    <p class="offset-1">No reviews yet.</p>
+                    <% } %>
+
+                        <div class="row offset-1">
+                            <% for(let review of listing.reviews) { %>
+
+                                <% let formattedDate=new Date(review.create_at).toDateString(); %>
+
+
+                                    <div class="card review-card col-5 ms-2 mb-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title mt-1">@<%= review.author.username %>
+                                            </h5>
+                                            <h6 class="card-subtitle mb-2 text-body-secondary"></h6>
+                                            <p class="card-text">
+                                                <%= review.comment %>
+                                            </p>
+
+
+
+                                            <p class="card-text">
+
+                                               
+                                                <%for(let i=0; i < review.rating;i++) {%>
+
+                                                    
+                                                    <i class="fa-solid fa-star" ></i>
+
+                                                    <%}%>
+                                            </p>
+
+                                            <p class="card-text mb-1"><small class="text-body-secondary">
+                                                    <%= formattedDate %>
+                                                </small></p>
+                                        </div>
+
+
+
+                                        <% if(user && user._id.equals(review.author._id)) {%>
+
+                                            <div class="dropup-center dropup  review-card-menu">
+                                                <button class="btn btn " type="button" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa-solid fa-ellipsis"></i>
+                                                </button>
+
+
+
+                                                <ul class="dropdown-menu">
+
+                                                    <li>
+                                                        <form class="dropdown-item d-grid gap-2"
+                                                            action="/listings/<%= listing._id%>/review/<%= review._id %>?_method=DELETE"
+                                                            method="POST">
+
+                                                            <button class="btn btn-outline-danger">Delete</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+
+
+                                            <%}%>
+
+
+                                    </div>
+                                    <% } %>
+
+                        </div>
+        </div>
+
+
+
+        <div class="card offset-1 show-card mt-3 h-25 d-inline-block" style="width: 80%;" id="map"></div>
+
+
+
+
+        <h4 class="mb-3 mt-3 offset-1">Similar Listings</h4>
+
+
+
+
+        <div class="row d-flex flex-nowrap overflow-x-auto overflow-y-hidden offset-1">
+            <% for (let listings of allListings) { %>
+                <% if (listings._id.toString() !==listing._id.toString() && listings.price <=listing.price) { %>
+                    <a href="/listings/show/<%= listings._id %>" class="listing-card">
+                        <div class="card listings-card" style="width: auto;">
+                            <img src="<%= listings.image.url %>" class="card-img-top listing-card-img"
+                                alt="<%= listings.image %>" title="<%= listings.title %>" style="height: 11rem;">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <b>
+
+                                        <h6
+                                            style="text-wrap:nowrap; width: 11rem; overflow: hidden; text-overflow: ellipsis;">
+                                            <%= listings.title %>
+                                        </h6>
+
+
+                                    </b>
+                                    &#8377;<%= listings.price.toLocaleString("en-IN") %> / night
+                                    <% if (listings.reviews && listings.reviews.length > 0) { %>
+                                <% 
+                                    let commentCount = listings.reviews.length;
+
+                                    let maxComment = 5;
+
+                                    let ratingVal = commentCount >= maxComment 
+                                        ? 5.0 
+                                        : (commentCount / maxComment) * 5;
+
+                                    ratingVal = Math.round(ratingVal * 10) / 10;
+                                %>
+                                       
+
+                                        <i class="fa-solid fa-star"></i> <b><%= ratingVal.toFixed(1) %> / 5.0</b>
+
+                                        <%}%>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <% } %>
+
+                    
+                        <% } %>
+        </div>
+
+        <hr>
+
+
+        
+
+    </body>

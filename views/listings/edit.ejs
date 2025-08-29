@@ -1,0 +1,80 @@
+<% layout("/layouts/boilerplate") -%>
+<body>
+
+  
+    
+    <div class="row">
+
+            <div class="col-8 offset-2">
+                <h1>Edit Listing</h1>
+                <form action="/listings/<%=listing._id%>?_method=PUT" method="post" enctype="multipart/form-data">
+
+
+                    <div class="mb-3">
+
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" id="title" class="form-control border border-primary "
+                            aria-describedby="passwordHelpBlock" name="listing[title]" value="<%=listing.title%>" placeholder="Title">
+
+                    </div>
+
+                    <div class="mb-3">
+
+
+                        <label for="description" class="form-label ">Description</label>
+                        <textarea type="text" id="description" class="form-control  border border-primary"
+                            aria-describedby="passwordHelpBlock" name="listing[description]"
+                            placeholder="Description"><%=listing.description%></textarea>
+
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Original Image</label>
+                        <br>
+                        <img src="<%=originalImageUrl%>" alt="">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Upload New Image</label>
+                        <input type="file" id="image" class="form-control  border border-primary"
+                            aria-describedby="passwordHelpBlock" name="listing[image]">
+
+                    </div>
+
+
+                    <div class="row">
+
+
+                        <div class="mb-3 col-md-4">
+
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" id="price" class="form-control  border border-primary"
+                            aria-describedby="passwordHelpBlock" name="listing[price]" value="<%=listing.price%>" placeholder="Price">
+
+
+                    </div>
+
+
+                    <div class="mb-3 col-md-8">
+
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" id="location" class="form-control  border border-primary"
+                            aria-describedby="passwordHelpBlock" name="listing[location]" value="<%=listing.location%>" placeholder="Jaipur-Rajasthan">
+
+                    </div>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" id="country" class="form-control  border border-primary"
+                            aria-describedby="passwordHelpBlock" name="listing[country]" value="<%=listing.country%>" placeholder="India">
+
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+</body>
