@@ -22,7 +22,7 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "/public")));
 const ejsMate = require("ejs-mate");
 app.engine("ejs", ejsMate);
-const ExpressError = require("./utils/expressError.js");
+const ExpressError = require("./utils/ExpressError.js");
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
