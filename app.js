@@ -53,32 +53,28 @@ async function main() {
 }
 
 const store = MongoStore.create({
-
-    mongoUrl:userDb,
-    crypto:{
-        secret:process.env.SECRET,
+    mongoUrl: userDb,
+    crypto: {
+        secret: process.env.SECRET,
     },
-    touchAfter:24 * 3600
+    touchAfter: 24 * 3600
 });
 
-store.on("error",()=>{
+store.on("error", (err) => {
+    console.log("ERROR IN MONGO SESSION", err);
+});
 
-    console.log("ERROR IN MONGO SESSION",err)
-})
-
-const sessionOption = ({
+const sessionOption = {
     store,
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie:{
-        expires:Date.now() + 7 * 24 *60 * 60 * 1000,
-        maxAge:7 * 60 * 60 * 1000,
-        httpOnly:true 
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true
     }
-
-
-})
+};
 
 
 
