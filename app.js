@@ -36,7 +36,9 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
 
-const userDb = process.env.ATLAS_DB;
+
+const userDb = process.env.ATLAS_DB || "mongodb://127.0.0.1:27017/mydatabase";
+
 
 
 main().then(() => {
