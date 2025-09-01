@@ -37,8 +37,6 @@ const User = require("./models/user.js");
 
 
 
-const userDb = process.env.ATLAS_DB || "mongodb://127.0.0.1:27017/mydatabase";
-
 
 
 main().then(() => {
@@ -50,33 +48,39 @@ main().then(() => {
 })
 
 async function main() {
-
-    await mongoose.connect(userDb);
+    await mongoose.connect(process.env.ATLAS_DB, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
 }
 
 const store = MongoStore.create({
-    mongoUrl: userDb,
-    crypto: {
-        secret: process.env.SECRET,
+
+    mongoUrl:process.env.ATLAS_DB,
+    crypto:{
+        secret:process.env.SECRET,
     },
-    touchAfter: 24 * 3600
+    touchAfter:24 * 3600
 });
 
-store.on("error", (err) => {
-    console.log("ERROR IN MONGO SESSION", err);
-});
+store.on("error",(err)=>{
 
-const sessionOption = {
+    console.log("ERROR IN MONGO SESSION",err)
+})
+
+const sessionOption = ({
     store,
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: {
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true
+    cookie:{
+        expires:Date.now() + 7 * 24 *60 * 60 * 1000,
+        maxAge:7 * 60 * 60 * 1000,
+        httpOnly:true 
     }
-};
+
+
+})
 
 
 
@@ -94,7 +98,7 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
 
-    res.locals.user = req.user;
+    res.locals.user = req.user || null;
     res.locals.success = req.flash("success");
     res.locals.Delete = req.flash("Delete");
     res.locals.review = req.flash("review");
@@ -108,17 +112,17 @@ app.use("/listings/:id/review", reviewRouter);
 app.use("/", userRouter);
 
 
-app.all("{/*splat}", (req, res, next) => {
+// app.all("{/*splat}", (req, res, next) => {
 
-    next(new ExpressError(404, "Page Not found"));
-})
+//     next(new ExpressError(404, "Page Not found"));
+// })
 
 
 
-app.use((err, req, res, next) => {
-    const { statusCode = 500, message = "Something went wrong!" } = err;
-    res.render("listings/error.ejs", { statusCode, message });
-});
+// app.use((err, req, res, next) => {
+//     const { statusCode = 500, message = "Something went wrong!" } = err;
+//     res.render("listings/error.ejs", { statusCode, message });
+// });
 
 
 
