@@ -112,17 +112,17 @@ app.use("/listings/:id/review", reviewRouter);
 app.use("/", userRouter);
 
 
-// app.all("{/*splat}", (req, res, next) => {
+app.all("{/*splat}", (req, res, next) => {
 
-//     next(new ExpressError(404, "Page Not found"));
-// })
+    next(new ExpressError(404, "Page Not found"));
+})
 
 
 
-// app.use((err, req, res, next) => {
-//     const { statusCode = 500, message = "Something went wrong!" } = err;
-//     res.render("listings/error.ejs", { statusCode, message });
-// });
+app.use((err, req, res, next) => {
+    const { statusCode = 500, message = "Something went wrong!" } = err;
+    res.render("listings/error.ejs", { statusCode, message });
+});
 
 
 
